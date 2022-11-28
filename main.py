@@ -17,6 +17,7 @@ def calculate_sum(cards):
   # card_sum = sum(cards) if sum(cards) != 21 else 0
   card_sum = sum(cards)
 
+  #changes ace value from 11 to 1 if user would otherwise go over
   if card_sum > 21 and 11 in cards:
     ace_ind = cards.index(11)
     cards[ace_ind] = 1
@@ -25,6 +26,7 @@ def calculate_sum(cards):
   return card_sum
 
 def deal_cards(num):
+  """Returns an array with the random amount of cards requested"""
   cards = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
   cards_drawn = random.sample(cards, num)
   return cards_drawn
@@ -58,29 +60,31 @@ def show_results(user, comp):
   print(f"Computer's final hand: {comp['cards']}, final score: {comp['score']}")
   result_text = get_result_text(user['score'], comp['score'])
   print(f"{result_text}")
-  
+
 def run():
   game_active = False
-  game_begun = False
   continue_dealing = False
-  user_data = {}
-  computer_data = {}
   
-  while not game_begun:
+  while not game_active:
     wants_to_play = initial_setup()
 
     if wants_to_play:
       print(logo)
       game_active = True
-      game_begun = True
       user_data = {}
       computer_data = {}
   
   while game_active:
     user_data["cards"] = deal_cards(2)
     user_data["score"] = calculate_sum(user_data["cards"])
-    computer_data["cards"] = deal_cards(2)
-    computer_data["score"] = calculate_sum(computer_data["cards"])
+    computer_data["cards"] = deal_cards(1)
+    #keep dealing cards to the computer if the sum is < 17
+    #only add card to hand if it doesn't make them bust
+    while  calculate_sum(computer_data["cards"]) < 17:
+      additional_deal = deal_cards(1)[0]
+      if calculate_sum(computer_data["cards"]) + additional_deal < 22:
+        computer_data["cards"].append(additional_deal)
+    computer_data["score"] = calculate_sum(computer_data["cards"])     
     wants_another_card = print_card_data(user_data, computer_data)
     
     if wants_another_card:
@@ -94,6 +98,7 @@ def run():
       user_data["cards"] += deal_cards(1)
       user_data["score"] = calculate_sum(user_data["cards"])
 
+      #trigger end of game if user gets blackjack or busts
       if user_data["score"] >= 21:
         show_results(user_data, computer_data)
         continue_dealing = False
@@ -107,6 +112,5 @@ def run():
         continue_dealing = False
         game_active = False
         run()
-       
 run()
 
