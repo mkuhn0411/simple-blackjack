@@ -1,4 +1,5 @@
 import random
+from replit import clear
 from art import logo
 
 def initial_setup(): 
@@ -14,7 +15,6 @@ def initial_setup():
   return play == 'y'
 
 def calculate_sum(cards):
-  # card_sum = sum(cards) if sum(cards) != 21 else 0
   card_sum = sum(cards)
 
   #changes ace value from 11 to 1 if user would otherwise go over
@@ -45,14 +45,14 @@ def print_card_data(user, computer):
 
 def get_result_text(user_score, comp_score):
   result_text = ""
-  if user_score > comp_score and user_score < 22:
-    result_text = "You win!"
+  if user_score > comp_score and user_score < 22 and comp_score != 21:
+    result_text = "You win! 😁"
   elif comp_score == user_score and user_score == 21:
-    result_text = "It's a tie."
+    result_text = "It's a tie.🧐"
   elif comp_score == user_score and user_score:
-    result_text = "It's a push."
+    result_text = "It's a push.😮‍💨"
   else:
-    result_text = "You lose lol."
+    result_text = "You lose lol.😭"
   return result_text
 
 def show_results(user, comp):
@@ -60,6 +60,7 @@ def show_results(user, comp):
   print(f"Computer's final hand: {comp['cards']}, final score: {comp['score']}")
   result_text = get_result_text(user['score'], comp['score'])
   print(f"{result_text}")
+  clear()
 
 def run():
   game_active = False
@@ -78,8 +79,7 @@ def run():
     user_data["cards"] = deal_cards(2)
     user_data["score"] = calculate_sum(user_data["cards"])
     computer_data["cards"] = deal_cards(1)
-    #keep dealing cards to the computer if the sum is < 17
-    #only add card to hand if it doesn't make them bust
+
     while  calculate_sum(computer_data["cards"]) < 17:
       additional_deal = deal_cards(1)[0]
       if calculate_sum(computer_data["cards"]) + additional_deal < 22:
